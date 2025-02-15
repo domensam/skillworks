@@ -2,145 +2,176 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
 import { Button } from "@/components/ui/button"
+import { Progress } from "@/components/ui/progress"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { 
+  User, 
+  Briefcase, 
+  GraduationCap, 
+  Award,
+  ChevronRight,
+  ChevronLeft
+} from "lucide-react"
+
+const steps = [
+  { id: 1, title: "Personal Info", icon: User },
+  { id: 2, title: "Experience", icon: Briefcase },
+  { id: 3, title: "Education", icon: GraduationCap },
+  { id: 4, title: "Skills", icon: Award },
+]
 
 export default function SeekerOnboarding() {
-  const [step, setStep] = useState(1)
+  const [currentStep, setCurrentStep] = useState(1)
   const router = useRouter()
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
-  const [sex, setSex] = useState("")
-  const [birthday, setBirthday] = useState("")
-  const [address, setAddress] = useState("")
+  
+  const progress = (currentStep / steps.length) * 100
+
+  const nextStep = () => {
+    if (currentStep < steps.length) {
+      setCurrentStep(currentStep + 1)
+    }
+  }
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1)
+    }
+  }
+
+  const handleSubmit = () => {
+    // Here you would typically handle form submission
+    // For now, we'll just redirect to the dashboard
+    router.push("/dashboard")
+  }
 
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center p-4 bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/onboarding-bg-plpBnQ0G3IYr2IamWNiYnaJlJ77ORv.png')`,
-      }}
-    >
-      <div className="w-full max-w-md">
-        <div className="flex justify-center mb-8">
-          <Image
-            src="skillworks-icon+title.svg"
-            alt="Skillworks"
-            className="mb-8 object-cover w-full h-[200px]"
-            height={500}
-            width={500}
-          />
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20 p-4 md:p-8">
+      <Card className="mx-auto max-w-2xl p-6 backdrop-blur-sm bg-background/80">
+        <div className="space-y-6">
+          {/* Progress Header */}
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold tracking-tight">Complete Your Profile</h2>
+            <p className="text-muted-foreground">
+              Step {currentStep} of {steps.length}: {steps[currentStep - 1].title}
+            </p>
+            <Progress value={progress} className="mt-2" />
+          </div>
 
-        <Card className="p-6">
-          <div className="space-y-6">
-            {step === 1 && (
-              <>
-                <div className="space-y-4">
-                  <h2 className="text-lg font-semibold">Create Your Account</h2>
-                  <div className="space-y-2">
+          {/* Step Indicators */}
+          <div className="flex justify-between items-center">
+            {steps.map((step) => {
+              const Icon = step.icon
+              return (
+                <div 
+                  key={step.id}
+                  className={`flex flex-col items-center space-y-2 ${
+                    step.id === currentStep 
+                      ? "text-primary" 
+                      : step.id < currentStep 
+                      ? "text-muted-foreground"
+                      : "text-muted-foreground/40"
+                  }`}
+                >
+                  <div className={`
+                    p-2 rounded-full border-2 transition-colors
+                    ${step.id === currentStep 
+                      ? "border-primary bg-primary/10" 
+                      : step.id < currentStep
+                      ? "border-muted-foreground bg-muted"
+                      : "border-muted-foreground/40"}
+                  `}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <span className="text-xs font-medium hidden md:block">{step.title}</span>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Form Content */}
+          <div className="space-y-4 py-4">
+            {currentStep === 1 && (
+              <div className="space-y-4">
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input id="name" placeholder="Enter your full name" />
+                  </div>
+                  <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
                     <Input id="email" type="email" placeholder="Enter your email" />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input id="password" type="password" placeholder="Create a password" />
-                  </div>
                 </div>
-              </>
+              </div>
             )}
 
-            {step === 2 && (
-              <>
-                <div className="space-y-4">
-                  <h2 className="text-lg font-semibold">Personal Information</h2>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">First Name</Label>
-                      <Input id="firstName" placeholder="First name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName">Last Name</Label>
-                      <Input id="lastName" placeholder="Last name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
-                    </div>
+            {currentStep === 2 && (
+              <div className="space-y-4">
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="company">Current/Last Company</Label>
+                    <Input id="company" placeholder="Company name" />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="sex">Sex</Label>
-                    <Select onValueChange={setSex}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select sex" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="birthday">Birthday</Label>
-                    <Input id="birthday" type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="address">Address</Label>
-                    <Input id="address" placeholder="Enter your address" value={address} onChange={(e) => setAddress(e.target.value)} />
+                  <div className="grid gap-2">
+                    <Label htmlFor="position">Position</Label>
+                    <Input id="position" placeholder="Your role" />
                   </div>
                 </div>
-              </>
+              </div>
             )}
 
-            {step === 3 && (
-              <>
-                <div className="space-y-4">
-                  <h2 className="text-lg font-semibold">Document Upload</h2>
-                  <div className="space-y-2">
-                    <Label htmlFor="govId">Government ID</Label>
-                    <Input id="govId" type="file" accept="image/*,.pdf" />
+            {currentStep === 3 && (
+              <div className="space-y-4">
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="school">School/University</Label>
+                    <Input id="school" placeholder="Enter school name" />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="tesda">TESDA Certificates</Label>
-                    <Input id="tesda" type="file" accept="image/*,.pdf" multiple />
+                  <div className="grid gap-2">
+                    <Label htmlFor="degree">Degree</Label>
+                    <Input id="degree" placeholder="Enter your degree" />
                   </div>
                 </div>
-              </>
+              </div>
             )}
 
-            <div className="flex justify-between pt-4">
-              {step > 1 && (
-                <Button variant="outline" onClick={() => setStep(step - 1)}>
-                  Back
-                </Button>
-              )}
-              <Button
-                className="ml-auto"
-                onClick={() => {
-                  if (step < 3) {
-                    setStep(step + 1)
-                  } else {
-                    // After successful submission, store data and redirect to seeker profile
-                    const profileData = {
-                      firstName,
-                      lastName,
-                      sex,
-                      birthday,
-                      address,
-                    }
-                    localStorage.setItem("seekerProfile", JSON.stringify(profileData))
-                    router.push("/dashboard/seeker")
-                  }
-                }}
-              >
-                {step === 3 ? "Submit" : "Next"}
-              </Button>
-            </div>
+            {currentStep === 4 && (
+              <div className="space-y-4">
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="skills">Skills</Label>
+                    <Input id="skills" placeholder="Enter your key skills" />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="years">Years of Experience</Label>
+                    <Input id="years" type="number" placeholder="Years of experience" />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-        </Card>
-      </div>
+
+          {/* Navigation Buttons */}
+          <div className="flex justify-between pt-4">
+            <Button
+              variant="outline"
+              onClick={prevStep}
+              disabled={currentStep === 1}
+            >
+              <ChevronLeft className="mr-2 h-4 w-4" /> Back
+            </Button>
+            <Button
+              onClick={currentStep === steps.length ? handleSubmit : nextStep}
+            >
+              {currentStep === steps.length ? "Submit" : "Next"} 
+              {currentStep !== steps.length && <ChevronRight className="ml-2 h-4 w-4" />}
+            </Button>
+          </div>
+        </div>
+      </Card>
     </div>
   )
 }
-
