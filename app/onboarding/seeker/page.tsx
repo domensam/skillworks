@@ -1,51 +1,57 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { 
-  User, 
-  Briefcase, 
-  GraduationCap, 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  User,
+  Briefcase,
+  GraduationCap,
   Award,
   ChevronRight,
-  ChevronLeft
-} from "lucide-react"
+  ChevronLeft,
+  Brain,
+  Shield,
+} from "lucide-react";
+import { AIPreferences } from "./components/AIPreferences";
+import { ICPSetup } from "./components/ICPSetup";
 
 const steps = [
   { id: 1, title: "Personal Info", icon: User },
   { id: 2, title: "Experience", icon: Briefcase },
   { id: 3, title: "Education", icon: GraduationCap },
   { id: 4, title: "Skills", icon: Award },
-]
+  { id: 5, title: "AI Preferences", icon: Brain },
+  { id: 6, title: "ICP Setup", icon: Shield },
+];
 
 export default function SeekerOnboarding() {
-  const [currentStep, setCurrentStep] = useState(1)
-  const router = useRouter()
-  
-  const progress = (currentStep / steps.length) * 100
+  const [currentStep, setCurrentStep] = useState(1);
+  const router = useRouter();
+
+  const progress = (currentStep / steps.length) * 100;
 
   const nextStep = () => {
     if (currentStep < steps.length) {
-      setCurrentStep(currentStep + 1)
+      setCurrentStep(currentStep + 1);
     }
-  }
+  };
 
   const prevStep = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1)
+      setCurrentStep(currentStep - 1);
     }
-  }
+  };
 
   const handleSubmit = () => {
     // Here you would typically handle form submission
     // For now, we'll just redirect to the dashboard
-    router.push("/dashboard")
-  }
+    router.push("/dashboard");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20 p-4 md:p-8">
@@ -53,9 +59,12 @@ export default function SeekerOnboarding() {
         <div className="space-y-6">
           {/* Progress Header */}
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold tracking-tight">Complete Your Profile</h2>
+            <h2 className="text-2xl font-bold tracking-tight">
+              Complete Your Profile
+            </h2>
             <p className="text-muted-foreground">
-              Step {currentStep} of {steps.length}: {steps[currentStep - 1].title}
+              Step {currentStep} of {steps.length}:{" "}
+              {steps[currentStep - 1].title}
             </p>
             <Progress value={progress} className="mt-2" />
           </div>
@@ -63,31 +72,37 @@ export default function SeekerOnboarding() {
           {/* Step Indicators */}
           <div className="flex justify-between items-center">
             {steps.map((step) => {
-              const Icon = step.icon
+              const Icon = step.icon;
               return (
-                <div 
+                <div
                   key={step.id}
                   className={`flex flex-col items-center space-y-2 ${
-                    step.id === currentStep 
-                      ? "text-primary" 
-                      : step.id < currentStep 
+                    step.id === currentStep
+                      ? "text-primary"
+                      : step.id < currentStep
                       ? "text-muted-foreground"
                       : "text-muted-foreground/40"
                   }`}
                 >
-                  <div className={`
+                  <div
+                    className={`
                     p-2 rounded-full border-2 transition-colors
-                    ${step.id === currentStep 
-                      ? "border-primary bg-primary/10" 
-                      : step.id < currentStep
-                      ? "border-muted-foreground bg-muted"
-                      : "border-muted-foreground/40"}
-                  `}>
+                    ${
+                      step.id === currentStep
+                        ? "border-primary bg-primary/10"
+                        : step.id < currentStep
+                        ? "border-muted-foreground bg-muted"
+                        : "border-muted-foreground/40"
+                    }
+                  `}
+                  >
                     <Icon className="w-5 h-5" />
                   </div>
-                  <span className="text-xs font-medium hidden md:block">{step.title}</span>
+                  <span className="text-xs font-medium hidden md:block">
+                    {step.title}
+                  </span>
                 </div>
-              )
+              );
             })}
           </div>
 
@@ -102,7 +117,11 @@ export default function SeekerOnboarding() {
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="Enter your email" />
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="Enter your email"
+                    />
                   </div>
                 </div>
               </div>
@@ -147,11 +166,19 @@ export default function SeekerOnboarding() {
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="years">Years of Experience</Label>
-                    <Input id="years" type="number" placeholder="Years of experience" />
+                    <Input
+                      id="years"
+                      type="number"
+                      placeholder="Years of experience"
+                    />
                   </div>
                 </div>
               </div>
             )}
+
+            {currentStep === 5 && <AIPreferences />}
+
+            {currentStep === 6 && <ICPSetup />}
           </div>
 
           {/* Navigation Buttons */}
@@ -166,12 +193,14 @@ export default function SeekerOnboarding() {
             <Button
               onClick={currentStep === steps.length ? handleSubmit : nextStep}
             >
-              {currentStep === steps.length ? "Submit" : "Next"} 
-              {currentStep !== steps.length && <ChevronRight className="ml-2 h-4 w-4" />}
+              {currentStep === steps.length ? "Submit" : "Next"}
+              {currentStep !== steps.length && (
+                <ChevronRight className="ml-2 h-4 w-4" />
+              )}
             </Button>
           </div>
         </div>
       </Card>
     </div>
-  )
+  );
 }
